@@ -1,15 +1,15 @@
-import FixtureSet from '../../FixtureSet';
-import TestCase from '../../TestCase';
+import FixtureSet from "../../FixtureSet";
+import TestCase from "../../TestCase";
 
 const React = window.React;
 const ReactDOM = window.ReactDOM;
 
 class SelectFixture extends React.Component {
-  state = {value: ''};
+  state = { value: "" };
   _nestedDOMNode = null;
 
   onChange = event => {
-    this.setState({value: event.target.value});
+    this.setState({ value: event.target.value });
   };
 
   componentDidMount() {
@@ -35,6 +35,7 @@ class SelectFixture extends React.Component {
   render() {
     return (
       <FixtureSet title="Selects" description="">
+        adasd
         <form className="field-group">
           <fieldset>
             <legend>Controlled</legend>

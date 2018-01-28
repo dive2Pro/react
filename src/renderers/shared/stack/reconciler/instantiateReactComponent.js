@@ -21,6 +21,10 @@ if (__DEV__) {
 
 var nextDebugID = 1;
 
+/**
+ *  TODO: 是什么样的 cyclic dependency ?
+ *  TODO:      为什么这样 就可以避免?
+ */
 // To avoid a cyclic dependency, we create the final class in this module
 var ReactCompositeComponentWrapper = function(element) {
   this.construct(element);
@@ -66,6 +70,13 @@ function instantiateReactComponent(node, shouldHaveDebugID) {
   if (node === null || node === false) {
     instance = ReactEmptyComponent.create(instantiateReactComponent);
   } else if (typeof node === 'object') {
+    /**
+     * 这种情况是因为js 的模块化造成的
+     * eg:  import Foo from './foo'
+     *      此时在 foo 中 没有 default export, 但是因为 实际上 
+     *      这段命令是相当于 import Foo from './foo'.default 的
+     *      所以才会进入这里 
+     */
     var element = node;
     var type = element.type;
     if (typeof type !== 'function' && typeof type !== 'string') {
@@ -106,6 +117,9 @@ function instantiateReactComponent(node, shouldHaveDebugID) {
         instance.getHostNode = instance.getNativeNode;
       }
     } else {
+      /**
+       * class 或者是 stateless function 都在此 instantiate
+       */
       instance = new ReactCompositeComponentWrapper(element);
     }
   } else if (typeof node === 'string' || typeof node === 'number') {

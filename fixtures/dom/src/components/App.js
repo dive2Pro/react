@@ -1,10 +1,10 @@
-import Header from './Header';
-import Fixtures from './fixtures';
-import '../style.css';
+import Header from "./Header";
+import Fixtures from "./fixtures";
+import "../style.css";
 
 const React = window.React;
 
-function App() {
+function App2() {
   return (
     <div>
       <Header />
@@ -14,5 +14,9 @@ function App() {
     </div>
   );
 }
-
+class App {
+  render() {
+    return <App2 />;
+  }
+}
 export default App;

@@ -20,7 +20,7 @@ var ReactMarkupChecksum = require('ReactMarkupChecksum');
 var ReactReconciler = require('ReactReconciler');
 var ReactUpdateQueue = require('ReactUpdateQueue');
 var ReactUpdates = require('ReactUpdates');
-var {ReactCurrentOwner} = require('ReactGlobalSharedState');
+var { ReactCurrentOwner } = require('ReactGlobalSharedState');
 
 var getContextForSubtree = require('getContextForSubtree');
 var instantiateReactComponent = require('instantiateReactComponent');
@@ -379,7 +379,7 @@ var ReactMount = {
         },
       ];
     }
-
+    // 初始化是同步的
     // The initial render is synchronous but any updates that happen during
     // rendering, in componentWillMount or componentDidMount, will be batched
     // according to the current batching strategy.
@@ -429,6 +429,9 @@ var ReactMount = {
     );
   },
 
+  /**
+   * render will call this
+   */
   _renderSubtreeIntoContainer: function(
     parentComponent,
     nextElement,
@@ -444,6 +447,7 @@ var ReactMount = {
         '' + callback,
       );
     }
+
     if (!React.isValidElement(nextElement)) {
       if (typeof nextElement === 'string') {
         invariant(
@@ -491,8 +495,12 @@ var ReactMount = {
     });
 
     var nextContext = getContextForSubtree(parentComponent);
-    var prevComponent = getTopLevelWrapperInContainer(container);
 
+    var prevComponent = getTopLevelWrapperInContainer(container);
+    // 检查此次是否调用了 ReactDOM.render 在同一个 container 上面
+    // 如果是则检查是否要更新
+    //       - 是 , 则是常规更新组件, 并返回之前的挂载的 component
+    //       - 否 , unmount 之前的组件, 重新渲染新 render 的组件
     if (prevComponent) {
       var prevWrappedElement = prevComponent._currentElement;
       var prevElement = prevWrappedElement.props.child;

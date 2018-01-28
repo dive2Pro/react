@@ -49,7 +49,14 @@ var ReactDefaultBatchingStrategy = {
    */
   batchedUpdates: function(callback, a, b, c, d, e) {
     var alreadyBatchingUpdates = ReactDefaultBatchingStrategy.isBatchingUpdates;
-
+    /**
+     *  要明确一点的是 此时每一个Component 都有自己的实例 ( 但是更新的策略是相同的 ):
+     *         - ReactUpdates
+     *         - ReactBatchingStrategy
+     *         - ReactTransaction
+     *  
+     *  
+     */
     ReactDefaultBatchingStrategy.isBatchingUpdates = true;
 
     // The code is written this way to avoid extra allocations

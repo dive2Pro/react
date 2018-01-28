@@ -1,14 +1,15 @@
-import RangeInputFixtures from './range-inputs';
-import TextInputFixtures from './text-inputs';
-import SelectFixtures from './selects';
-import TextAreaFixtures from './textareas';
-import InputChangeEvents from './input-change-events';
-import NumberInputFixtures from './number-inputs';
-import PasswordInputFixtures from './password-inputs';
-import ButtonFixtures from './buttons';
-import DateInputFixtures from './date-inputs';
-import ErrorHandling from './error-handling';
-import EventPooling from './event-pooling';
+import RangeInputFixtures from "./range-inputs";
+import TextInputFixtures from "./text-inputs";
+import SelectFixtures from "./selects";
+import TextAreaFixtures from "./textareas";
+import InputChangeEvents from "./input-change-events";
+import NumberInputFixtures from "./number-inputs";
+import PasswordInputFixtures from "./password-inputs";
+import ButtonFixtures from "./buttons";
+import DateInputFixtures from "./date-inputs";
+import ErrorHandling from "./error-handling";
+import EventPooling from "./event-pooling";
+import ExtendError from "./extend-error";
 
 const React = window.React;
 
@@ -18,28 +19,30 @@ const React = window.React;
  */
 function FixturesPage() {
   switch (window.location.pathname) {
-    case '/text-inputs':
+    case "/text-inputs":
       return <TextInputFixtures />;
-    case '/range-inputs':
+    case "/range-inputs":
       return <RangeInputFixtures />;
-    case '/selects':
+    case "/selects":
       return <SelectFixtures />;
-    case '/textareas':
+    case "/textareas":
       return <TextAreaFixtures />;
-    case '/input-change-events':
+    case "/input-change-events":
       return <InputChangeEvents />;
-    case '/number-inputs':
+    case "/number-inputs":
       return <NumberInputFixtures />;
-    case '/password-inputs':
+    case "/password-inputs":
       return <PasswordInputFixtures />;
-    case '/buttons':
+    case "/buttons":
       return <ButtonFixtures />;
-    case '/date-inputs':
+    case "/date-inputs":
       return <DateInputFixtures />;
-    case '/error-handling':
+    case "/error-handling":
       return <ErrorHandling />;
-    case '/event-pooling':
+    case "/event-pooling":
       return <EventPooling />;
+    case "/extend-error":
+      return <ExtendError />;
     default:
       return <p>Please select a test fixture.</p>;
   }
