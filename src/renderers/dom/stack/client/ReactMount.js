@@ -95,10 +95,13 @@ function mountComponentIntoNode(
   shouldReuseMarkup,
   context,
 ) {
+  /**
+   */
   var markup = ReactReconciler.mountComponent(
     wrapperInstance,
     transaction,
     null,
+    //
     ReactDOMContainerInfo(wrapperInstance, container),
     context,
     0 /* parentDebugID */,
@@ -131,6 +134,7 @@ function batchedMountComponentIntoNode(
     /* useCreateElement */
     !shouldReuseMarkup,
   );
+
   transaction.perform(
     mountComponentIntoNode,
     null,
@@ -140,6 +144,7 @@ function batchedMountComponentIntoNode(
     shouldReuseMarkup,
     context,
   );
+
   ReactUpdates.ReactReconcileTransaction.release(transaction);
 }
 
@@ -384,6 +389,9 @@ var ReactMount = {
     // rendering, in componentWillMount or componentDidMount, will be batched
     // according to the current batching strategy.
 
+    /**
+     * 如果
+     */
     ReactUpdates.batchedUpdates(
       batchedMountComponentIntoNode,
       componentInstance,

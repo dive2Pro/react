@@ -17,10 +17,10 @@ var ReactInstanceMap = require('ReactInstanceMap');
 var ReactInstrumentation = require('ReactInstrumentation');
 var ReactNodeTypes = require('ReactNodeTypes');
 var ReactReconciler = require('ReactReconciler');
-var {ReactCurrentOwner} = require('ReactGlobalSharedState');
+var { ReactCurrentOwner } = require('ReactGlobalSharedState');
 
 if (__DEV__) {
-  var {ReactDebugCurrentFrame} = require('ReactGlobalSharedState');
+  var { ReactDebugCurrentFrame } = require('ReactGlobalSharedState');
   var ReactDebugCurrentStack = require('ReactDebugCurrentStack');
   var warning = require('fbjs/lib/warning');
   var warningAboutMissingGetChildContext = {};
@@ -33,6 +33,12 @@ var shallowEqual = require('fbjs/lib/shallowEqual');
 var shouldUpdateReactComponent = require('shouldUpdateReactComponent');
 
 function StatelessComponent(Component) {}
+
+/**
+ * 为 StatelessComponent 添加 render 方法
+ * 所以在内部中  react 是将其视为 component 而不是函数方法
+ * 
+ */
 StatelessComponent.prototype.render = function() {
   var Component = ReactInstanceMap.get(this)._currentElement.type;
   var element = Component(this.props, this.context, this.updater);
@@ -163,7 +169,6 @@ var ReactCompositeComponent = {
     this._mountOrder = nextMountID++;
     this._hostParent = hostParent;
     this._hostContainerInfo = hostContainerInfo;
-
     var publicProps = this._currentElement.props;
     var publicContext = this._processContext(context);
 
@@ -172,31 +177,49 @@ var ReactCompositeComponent = {
     var updateQueue = transaction.getUpdateQueue();
 
     // Initialize the public class
+    // 检查其是否继承自 React.Component 或者 PureComponent
     var doConstruct = shouldConstruct(Component);
+
+    // 直接调用 传入的代表组件的函数
     var inst = this._constructComponent(
       doConstruct,
       publicProps,
       publicContext,
       updateQueue,
     );
+    console.log('=-=-', Component, doConstruct);
+
     var renderedElement;
 
     // Support functional components
+    // 如果 doConstruct = false
+    // 即说明 Component 没有继承 React.Component, 会和 stateless function 一样进入这个作用域
     if (!doConstruct && (inst == null || inst.render == null)) {
       renderedElement = inst;
       if (__DEV__) {
+        /**
+         * 这里检查 是否有 static 的 childContextTypes
+         */
         warning(
           !Component.childContextTypes,
           '%s(...): childContextTypes cannot be defined on a functional component.',
           Component.displayName || Component.name || 'Component',
         );
       }
+      /**
+       * 返回的是一个 Array 非 element 数组, 或者 简单的 object 对象
+       * 是不可接受的
+       */
       invariant(
         inst === null || inst === false || React.isValidElement(inst),
         '%s(...): A valid React element (or null) must be returned. You may have ' +
           'returned undefined, an array or some other invalid object.',
         Component.displayName || Component.name || 'Component',
       );
+      /**
+       * 为 stateless 添加 render 方法
+       */
+
       inst = new StatelessComponent(Component);
       this._compositeType = ReactCompositeComponentTypes.StatelessFunctional;
     } else {
@@ -231,6 +254,7 @@ var ReactCompositeComponent = {
         componentName,
       );
     }
+    console.log('before ', inst);
 
     // These should be set up in the constructor, but as a convenience for
     // simpler class abstractions, we set them up after the fact.
@@ -240,6 +264,7 @@ var ReactCompositeComponent = {
     inst.updater = updateQueue;
 
     this._instance = inst;
+    // console.log('here after ', inst);
 
     // Store a reference from the instance back to the internal representation
     ReactInstanceMap.set(inst, this);
@@ -328,6 +353,9 @@ var ReactCompositeComponent = {
       this.getName() || 'ReactCompositeComponent',
     );
 
+    /**
+     * 每一个Component 在此处 初始化 State 和更新 queue
+     */
     this._pendingStateQueue = null;
     this._pendingReplaceState = false;
     this._pendingForceUpdate = false;
@@ -350,6 +378,11 @@ var ReactCompositeComponent = {
     }
 
     var markup;
+    /**
+     * 
+     * renderedElement 是 null , 如果传入的组件是 stateless function 的话
+     * Todo: 如果在普通的class 中使用了这个方法会有什么后果?
+     */
     if (inst.componentDidCatch) {
       markup = this.performInitialMountWithErrorHandling(
         renderedElement,
@@ -359,6 +392,15 @@ var ReactCompositeComponent = {
         context,
       );
     } else {
+      console.log('goes here bang!');
+      // console.log(
+      //   renderedElement,
+      //   hostParent,
+      //   hostContainerInfo,
+      //   transaction,
+      //   context,
+      // );
+
       markup = this.performInitialMount(
         renderedElement,
         hostParent,
@@ -367,7 +409,9 @@ var ReactCompositeComponent = {
         context,
       );
     }
-
+    /**
+     * 如果没有继承自 react.component 应该走不到这里
+     */
     if (inst.componentDidMount) {
       if (__DEV__) {
         transaction.getReactMountReady().enqueue(() => {
@@ -432,7 +476,7 @@ var ReactCompositeComponent = {
     updateQueue,
   ) {
     var Component = this._currentElement.type;
-
+    console.log(Component.prototype.constructor);
     if (doConstruct) {
       if (__DEV__) {
         return measureLifeCyclePerf(
@@ -444,9 +488,13 @@ var ReactCompositeComponent = {
         return new Component(publicProps, publicContext, updateQueue);
       }
     }
-
     // This can still be an instance in case of factory components
     // but we'll count this as time spent rendering as the more common case.
+    /**
+     *  也就是说在 dev 环境中, 会将其视作 class Component ? 
+     *  否, 只是用 函数包裹然后计算渲染的时间
+     */
+
     if (__DEV__) {
       return measureLifeCyclePerf(
         () => Component(publicProps, publicContext, updateQueue),
@@ -519,6 +567,7 @@ var ReactCompositeComponent = {
     }
 
     var nodeType = ReactNodeTypes.getType(renderedElement);
+
     this._renderedNodeType = nodeType;
     var child = this._instantiateReactComponent(
       renderedElement,
@@ -530,6 +579,9 @@ var ReactCompositeComponent = {
     if (__DEV__) {
       debugID = this._debugID;
     }
+    console.log(
+      "going here will throw error , when the Component doesn't extends from React.Component",
+    );
 
     var markup = ReactReconciler.mountComponent(
       child,

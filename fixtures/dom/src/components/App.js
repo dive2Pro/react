@@ -1,10 +1,11 @@
-import Header from "./Header";
-import Fixtures from "./fixtures";
-import "../style.css";
+import Header from './Header';
+import Fixtures from './fixtures';
+import '../style.css';
 
 const React = window.React;
 
 function App2() {
+  console.log('App2');
   return (
     <div>
       <Header />

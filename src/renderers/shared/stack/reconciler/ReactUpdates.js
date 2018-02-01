@@ -141,6 +141,10 @@ var flushBatchedUpdates = function() {
   // array and perform any updates enqueued by mount-ready handlers (i.e.,
   // componentDidUpdate) but we need to check here too in order to catch
   // updates enqueued by setState callbacks.
+
+  /**
+   * - dirtyComponents where
+   */
   while (dirtyComponents.length) {
     var transaction = ReactUpdatesFlushTransaction.getPooled();
     transaction.perform(runBatchedUpdates, null, transaction);

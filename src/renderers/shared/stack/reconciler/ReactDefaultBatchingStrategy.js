@@ -23,9 +23,16 @@ var RESET_BATCHED_UPDATES = {
 
 var FLUSH_BATCHED_UPDATES = {
   initialize: emptyFunction,
+  /**
+   * TODO: 此处会去更新已经 dirty 的 components
+   */
   close: ReactUpdates.flushBatchedUpdates.bind(ReactUpdates),
 };
 
+/**
+ *  每当 transaction 被 perform,
+ *  这两个方法都会被执行
+ */
 var TRANSACTION_WRAPPERS = [FLUSH_BATCHED_UPDATES, RESET_BATCHED_UPDATES];
 
 function ReactDefaultBatchingStrategyTransaction() {

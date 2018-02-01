@@ -173,6 +173,11 @@ var Mixin = {
 
 Object.assign(ReactReconcileTransaction.prototype, Transaction, Mixin);
 
+/**
+ * 这里添加了一些 方法 比如
+ *    - getPooled
+ *    - release
+ */
 PooledClass.addPoolingTo(ReactReconcileTransaction);
 
 module.exports = ReactReconcileTransaction;

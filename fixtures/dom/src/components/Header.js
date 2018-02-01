@@ -1,14 +1,15 @@
-import { parse, stringify } from "query-string";
-import getVersionTags from "../tags";
+import { parse, stringify } from 'query-string';
+import getVersionTags from '../tags';
 const React = window.React;
 
 class Header extends React.Component {
   constructor(props, context) {
     super(props, context);
     const query = parse(window.location.search);
-    const version = query.version || "local";
+    const version = query.version || 'local';
     const versions = [version];
     this.state = { version, versions };
+    console.log('iam fine constructor');
   }
   componentWillMount() {
     getVersionTags().then(tags => {
@@ -20,7 +21,7 @@ class Header extends React.Component {
   handleVersionChange(event) {
     const query = parse(window.location.search);
     query.version = event.target.value;
-    if (query.version === "local") {
+    if (query.version === 'local') {
       delete query.version;
     }
     window.location.search = stringify(query);
@@ -28,7 +29,11 @@ class Header extends React.Component {
   handleFixtureChange(event) {
     window.location.pathname = event.target.value;
   }
+  componentDidMount() {
+    console.log('iam fine componentDidMount');
+  }
   render() {
+    console.log('iam fine render');
     return (
       <header className="header">
         <div className="header__inner">

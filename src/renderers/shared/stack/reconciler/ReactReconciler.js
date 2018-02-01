@@ -53,6 +53,8 @@ var ReactReconciler = {
         );
       }
     }
+    console.log(internalInstance);
+
     var markup = internalInstance.mountComponent(
       transaction,
       hostParent,

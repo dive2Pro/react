@@ -179,7 +179,6 @@ var ReactElement = function(type, key, ref, self, source, owner, props) {
  */
 ReactElement.createElement = function(type, config, children) {
   var propName;
-
   // Reserved names are extracted
   var props = {};
 
